@@ -32,7 +32,7 @@ func Test1(t *testing.T) {
 func Test111(t *testing.T) {
 
 	input_hash, _ := hex.DecodeString("899b7aed0bc68793e479245683c32d15cd92a4a1babb0f9ffd08cfb51339950d")
-	input_hash[28] = uint8(0) // 错误 3、4、5
+	input_hash[28] = uint8(0) // Error 3, 4, 5
 	check_step_by_input_hash(1, input_hash)
 
 }
@@ -181,7 +181,7 @@ func buildOrLoadProgram(cldir string, platform_id int, device_id int, rebuild bo
 	if rebuild || staterr != nil {
 		fmt.Print("Create opencl program with source: " + cldir + ", Please wait...")
 		buildok := false
-		go func() { // 打印
+		go func() { // Print
 			for {
 				time.Sleep(time.Second * 3)
 				if buildok {
@@ -195,7 +195,7 @@ func buildOrLoadProgram(cldir string, platform_id int, device_id int, rebuild bo
 		if bderr != nil {
 			panic(bderr)
 		}
-		buildok = true // build 完成
+		buildok = true // Build complete
 		fmt.Println("\nBuild complete get binaries...")
 		//fmt.Println("program.GetBinarySizes_2()")
 		sizes, _ := program.GetBinarySizes_2(1)
@@ -237,7 +237,7 @@ func buildOrLoadProgram(cldir string, platform_id int, device_id int, rebuild bo
 			panic(berr)
 		}
 		//fmt.Println(bin)
-		// 仅仅支持同一个平台的同一种设备
+		// Only the same device on the same platform is supported
 		bins := make([][]byte, len(devices))
 		sizes := make([]int, len(devices))
 		for k, _ := range devices {
@@ -257,6 +257,6 @@ func buildOrLoadProgram(cldir string, platform_id int, device_id int, rebuild bo
 	fmt.Println("build complete create kernel call...")
 	kernel, _ := program.CreateKernel(kernelname)
 
-	// 返回
+	// return
 	return device, program, kernel, context
 }

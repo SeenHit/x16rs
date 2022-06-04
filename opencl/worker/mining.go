@@ -11,16 +11,16 @@ import (
 	"sync/atomic"
 )
 
-// 关闭算力统计
+// Turn off force statistics
 func (g *GpuMiner) CloseUploadHashrate() {
 }
 
-// 开始采矿
+// Start mining
 func (g *GpuMiner) GetSuperveneWide() int {
 	return len(g.devices)
 }
 
-// 开始采矿
+// Start mining
 func (g *GpuMiner) DoMining(blockHeight uint64, reporthashrate bool, stopmark *byte, tarhashvalue []byte, blockheadmeta [][]byte) (bool, int, []byte, []byte) {
 
 	deviceNum := len(g.devices)
@@ -32,22 +32,22 @@ func (g *GpuMiner) DoMining(blockHeight uint64, reporthashrate bool, stopmark *b
 	var successNonce []byte = nil
 	var successHash []byte = nil
 
-	// 同步等待
+	// Sync wait
 	var syncWait = sync.WaitGroup{}
 	syncWait.Add(deviceNum)
 
-	// 设备执行
+	// Equipment execution
 	for i := 0; i < deviceNum; i++ {
 		go func(did int) {
 			defer syncWait.Done()
 			//fmt.Println("mr.deviceworkers[i]", did, len(g.deviceworkers), g.deviceworkers)
 			//devideCtx := g.deviceworkers[did]
 			stuffbts := blockheadmeta[did]
-			// 执行
+			// implement
 			x16rsrepeat := uint32(x16rs.HashRepeatForBlockHeight(blockHeight))
 			var basenoncestart uint64 = 1
 		RUNMINING:
-			// 初始化 执行环境
+			// Initialize execution environment
 			//devideCtx := g.createWorkContext(did)
 			devideCtx := g.deviceworkers[did]
 			devideCtx.ReInit(stuffbts, tarhashvalue)
@@ -70,7 +70,7 @@ func (g *GpuMiner) DoMining(blockHeight uint64, reporthashrate bool, stopmark *b
 				successStuffIdx = did
 				successNonce = nonce
 				successHash = endhash
-				// 检查是否真的成功
+				// Check whether it is really successful
 				blk, _, _ := blocks.ParseExcludeTransactions(stuffbts, 0)
 				blk.SetNonceByte(nonce)
 				nblkhx := blk.HashFresh()
@@ -80,17 +80,17 @@ func (g *GpuMiner) DoMining(blockHeight uint64, reporthashrate bool, stopmark *b
 					fmt.Println(hex.EncodeToString(stuffbts))
 				}
 
-				return // 成功挖出，结束
+				return // Successful excavation, end
 			}
 			if *stopmark == 1 {
 				//fmt.Println("ok.")
-				return // 稀缺一个区块，结束
+				return // One block is scarce, end
 			}
-			// 继续挖款
+			// Continue to collect funds
 			basenoncestart += uint64(overstep)
 			if basenoncestart > uint64(4294967295) {
 				//if basenoncestart > uint64(529490) {
-				return // 本轮挖挖矿结束
+				return // Completion of this round of mining
 			}
 			//time.Sleep(time.Second * 5)
 			goto RUNMINING
@@ -98,12 +98,12 @@ func (g *GpuMiner) DoMining(blockHeight uint64, reporthashrate bool, stopmark *b
 	}
 
 	//fmt.Println("syncWait.Wait()")
-	// 等待
+	// wait for
 	syncWait.Wait()
 
 	//fmt.Println("syncWait.Wait() ok  返回")
 
-	// 返回
+	// return
 	return successed, successStuffIdx, successNonce, successHash
 
 }

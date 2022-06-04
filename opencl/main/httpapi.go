@@ -17,7 +17,7 @@ func dealHome(response http.ResponseWriter, request *http.Request) {
 
 func dealDoMiner(response http.ResponseWriter, request *http.Request) {
 	params := parseQueryForm(request)
-	// 参数检查
+	// Parameter check
 	needs := []string{"height", "blockstuff", "targethash", "coinmsg", "coinaddr"}
 	for _, n := range needs {
 		if _, ok := params[n]; !ok {
@@ -25,7 +25,7 @@ func dealDoMiner(response http.ResponseWriter, request *http.Request) {
 			return
 		}
 	}
-	// 参数值
+	// Parameter value
 	height, _ := strconv.ParseInt(params["height"], 10, 0)
 	stuff, _ := hex.DecodeString(params["blockstuff"])
 	var blkstuff [89]byte
@@ -39,7 +39,7 @@ func dealDoMiner(response http.ResponseWriter, request *http.Request) {
 	coinaddr_p, _ := hex.DecodeString(params["coinaddr"])
 	var coinaddr [21]byte
 	copy(coinaddr[:], coinaddr_p)
-	// 执行挖矿
+	// Execute mining
 	exeRet := gpuminer.ReStartMiner(uint32(height), blkstuff, target, coinmsg, coinaddr)
 	//
 	//// 进行挖矿
@@ -49,7 +49,7 @@ func dealDoMiner(response http.ResponseWriter, request *http.Request) {
 	//res := <-resultCh
 	//
 	if exeRet.retry {
-		response.Write([]byte(params["height"] + ".retry")) // 重新生成区块并尝试
+		response.Write([]byte(params["height"] + ".retry")) // Regenerate block and try
 	} else if exeRet.success {
 		nonce := hex.EncodeToString(exeRet.nonce)
 		bts := fmt.Sprintf(".[%d,%d,%d,%d]", exeRet.nonce[0], exeRet.nonce[1], exeRet.nonce[2], exeRet.nonce[3])

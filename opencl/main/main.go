@@ -39,11 +39,11 @@ func main() {
 	http_port := flag.Int("port", 3330, "Http Api listen port")
 	flag.Parse()
 
-	// 启动 gpu miner
+	// Start GPU miner
 	var miner GpuMiner
 	miner.InitBuildProgram(*cldir, *plat_name, *dv_id, *group_size, *loop_num, *execute_wide, *print_num_base, *rebuild)
 
-	// 启动 http 监听
+	// Start HTTP listening
 	go RunHttpRpcService(&miner, *http_port)
 
 	///////////////////////////////////////////////////

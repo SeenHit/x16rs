@@ -40,10 +40,10 @@ func (mr *GpuMiner) Init() error {
 		fmt.Printf("  - device %d: %s, (max_work_group_size: %d)\n", i, dv.Name(), dv.MaxWorkGroupSize())
 	}
 
-	// 是否单设备编译
+	// Single device compilation
 	if mr.useOneDeviceBuild {
 		fmt.Println("Only use single device to build and run.")
-		mr.devices = []*cl.Device{devices[0]} // 使用单台设备
+		mr.devices = []*cl.Device{devices[0]} // Using a single device
 	} else {
 		mr.devices = devices
 	}
@@ -52,7 +52,7 @@ func (mr *GpuMiner) Init() error {
 		return e
 	}
 
-	// opencl 文件准备
+	// OpenCL file preparation
 	if strings.Compare(mr.openclPath, "") == 0 {
 		tardir := GetCurrentDirectory() + "/opencl/"
 		if _, err := os.Stat(tardir); err != nil {
@@ -61,7 +61,7 @@ func (mr *GpuMiner) Init() error {
 			err := writeClFiles(tardir, files)
 			if err != nil {
 				fmt.Println(e)
-				os.Exit(0) // 致命错误
+				os.Exit(0) // Fatal error
 			}
 			fmt.Println("all file ok.")
 		} else {
@@ -70,21 +70,21 @@ func (mr *GpuMiner) Init() error {
 		mr.openclPath = tardir
 	}
 
-	// 编译源码
+	// Compile source code
 	mr.program = mr.buildOrLoadProgram()
 
-	// 初始化执行环境
+	// Initialize execution environment
 	devlen := len(mr.devices)
 	mr.deviceworkers = make([]*GpuMinerDeviceWorkerContext, devlen)
 	for i := 0; i < devlen; i++ {
 		mr.deviceworkers[i] = mr.createWorkContext(i)
 	}
 
-	// 初始化成功
+	// Initialization successful
 	return nil
 }
 
-// 写入 opencl 文件
+// Write OpenCL file
 func writeClFiles(tardir string, files map[string]string) error {
 
 	e := os.MkdirAll(tardir, os.ModePerm)
@@ -107,6 +107,6 @@ func writeClFiles(tardir string, files map[string]string) error {
 			return e
 		}
 	}
-	// 成功
+	// success
 	return nil
 }
